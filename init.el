@@ -2,6 +2,11 @@
 
 ;; bun!!!
 
+
+;;;
+(add-to-list 'load-path "~/.emacs.d/")
+
+
 ;;;
 ;;; initialize packages
 (require 'package)
@@ -21,6 +26,7 @@
     powerline
     highlight-parentheses
     ))
+
 (dolist (target_package ytcf/required_packages)
   (unless (package-installed-p target_package)
     (package-install target_package)
@@ -104,12 +110,12 @@
 ;; for japanese input
 ;; http://www.ubiqlog.com/archives/8538
 (prefer-coding-system 'utf-8)
-(setq quail-japanese-use-double-n t)
+(setq-default quail-japanese-use-double-n t)
 
 (require 'mozc)
 (set-language-environment "Japanese")
-(setq default-input-method "japanese-mozc")
-(setq mozc-candidate-style 'echo-area)
+(setq-default default-input-method "japanese-mozc")
+(setq-default mozc-candidate-style 'echo-area)
 (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
 
 
@@ -117,6 +123,13 @@
 ;;; --
 ;;
 (powerline-default-theme)
+
+
+
+;;; --
+;;
+(require 'linum)
+(setq-default linum-format "%5d")
 
 
 ;;; --
@@ -151,3 +164,18 @@
           '(lambda ()
              (delete-trailing-whitespace)
              ))
+
+
+;;; --
+(defun ytcf/toggle-fullscreen ()
+  ""
+  (interactive)
+  (let ((is_fullscreen (not (null (frame-parameter (selected-frame) 'fullscreen)))))
+    (if is_fullscreen (set-frame-parameter (selected-frame) 'fullscreen 'nil)
+      (set-frame-parameter (selected-frame) 'fullscreen 'fullboth))
+    ))
+(global-set-key [f11] 'ytcf/toggle-fullscreen)
+
+
+;;; --
+(load "mode-config/c++.el")
