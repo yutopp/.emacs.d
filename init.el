@@ -13,7 +13,7 @@
 ;; add melpa
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 ;; add marmalade
-(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 ;;
 (package-initialize)
 
@@ -25,6 +25,10 @@
     elscreen
     powerline
     highlight-parentheses
+    fold-dwim
+    js3-mode
+    web-mode
+    coffee-mode
     ))
 
 (dolist (target_package ytcf/required_packages)
@@ -158,6 +162,16 @@
 
 
 
+;; --
+;; fold
+(require 'fold-dwim)
+
+(global-set-key (kbd "C-x n")     'fold-dwim-toggle)
+(global-set-key (kbd "<M-f7>")    'fold-dwim-hide-all)
+(global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
+
+
+
 ;;; --
 ;;
 (add-hook 'before-save-hook
@@ -179,3 +193,5 @@
 
 ;;; --
 (load "mode-config/c++.el")
+(load "mode-config/web.el")
+(load "mode-config/coffeescript.el")
