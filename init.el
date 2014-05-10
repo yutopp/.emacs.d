@@ -29,6 +29,7 @@
     js3-mode
     web-mode
     coffee-mode
+    tuareg
     ))
 
 (dolist (target_package ytcf/required_packages)
@@ -69,7 +70,11 @@
 (line-number-mode t)
 (column-number-mode t)
 
-
+;;
+;; yaourt -S ttf-inconsolata
+(set-default-font "Inconsolata-11")
+(set-face-font 'variable-pitch "Inconsolata-11")
+;(set-face-attribute 'default nil :height 100)
 
 
 ;;
@@ -195,3 +200,6 @@
 (load "mode-config/c++.el")
 (load "mode-config/web.el")
 (load "mode-config/coffeescript.el")
+(load "mode-config/ocaml.el")
+
+(load "mode-config/rill.el")
