@@ -1,7 +1,8 @@
 ;; c-mode, c++-mode
 (defun ytcf/c++-mode-hook ()
-  (c-set-style "stroustrup")
   (setq-default c-basic-offset 4)
+  (c-set-style "stroustrup")
+  (c-set-offset 'inline-open '0)
   (linum-mode t)
   (hs-minor-mode 1))
 
