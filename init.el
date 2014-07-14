@@ -5,7 +5,7 @@
 
 
 ;;;
-(add-to-list 'load-path "~/.emacs.d/")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 
 ;;;
@@ -73,9 +73,12 @@
 
 ;;
 ;; yaourt -S ttf-inconsolata
-(set-default-font "Inconsolata-11")
-(set-face-font 'variable-pitch "Inconsolata-11")
-;(set-face-attribute 'default nil :height 100)
+(cond
+ ((find-font (font-spec :name "Inconsolata-11"))
+  (set-default-font "Inconsolata-11")
+  (set-face-font 'variable-pitch "Inconsolata-11")
+					;(Set-Face-attribute 'default nil :height 100)
+  ))
 
 
 ;;
@@ -122,11 +125,11 @@
 (prefer-coding-system 'utf-8)
 (setq-default quail-japanese-use-double-n t)
 
-(require 'mozc)
-(set-language-environment "Japanese")
-(setq-default default-input-method "japanese-mozc")
-(setq-default mozc-candidate-style 'echo-area)
-(global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
+(when (require 'mozc nil 'noerror)
+  (set-language-environment "Japanese")
+  (setq-default default-input-method "japanese-mozc")
+  (setq-default mozc-candidate-style 'echo-area)
+  (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method))
 
 
 
