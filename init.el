@@ -33,6 +33,7 @@
     go-mode
     deferred
     icicles
+    markdown-mode
     ))
 
 (defun ytcf/install_packages ()
@@ -243,7 +244,9 @@
 ;;
 (add-hook 'before-save-hook
           '(lambda ()
-             (delete-trailing-whitespace)
+             (when (and (stringp buffer-file-name)
+                        (not (string-match "\\.md\\'" buffer-file-name)))
+               (delete-trailing-whitespace))
              ))
 
 
@@ -271,3 +274,7 @@
 (add-to-list 'load-path "~/.emacs.d/ext/TypeScript support for emacs")
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 (autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
+
+;;; --
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+(add-hook 'markdown-mode-hook 'show-ws-toggle-show-trailing-whitespace)

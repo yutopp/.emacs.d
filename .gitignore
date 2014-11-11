@@ -3,3 +3,6 @@ elpa
 eshell
 url
 session.*
+
+abbrev_defs
+ido.last
