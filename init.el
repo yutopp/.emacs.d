@@ -3,9 +3,8 @@
 ;;;
 ;;; initialize packages
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/")
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 ;;;
@@ -16,7 +15,7 @@
     elscreen
     highlight-parentheses
     fold-dwim
-    js3-mode
+    js2-mode
     web-mode
     coffee-mode
     zenburn-theme
@@ -28,6 +27,8 @@
     company
     company-quickhelp
     telephone-line
+    typescript-mode
+    tide
     ))
 
 (defun ytcf/install_packages ()
@@ -302,14 +303,9 @@
 
 ;;; --
 ;; load packages
-(dolist (name (directory-files "lisp/mode-config/" t "\.el$"))
+(dolist (name (directory-files "~/.emacs.d/lisp/mode-config/" t "\.el$"))
   (load name))
 
-
-;;; --
-(add-to-list 'load-path "~/.emacs.d/ext/TypeScript support for emacs")
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
-(autoload 'typescript-mode "TypeScript" "Major mode for editing typescript." t)
 
 ;;; --
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
