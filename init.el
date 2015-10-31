@@ -1,28 +1,22 @@
 ;;; -*- coding: utf-8 -*-
 
-;; 進捗ないです
-;; bun!!!
-
-
 ;;;
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 ;;;
 ;;; initialize packages
 (require 'package)
-;; add melpa
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-;; add marmalade
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-;;
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/")
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 ;;;
-;; yfcf = yutopp config
+;; namespace yfcf = yutopp config
 (defconst ytcf/required_packages
   '(
+    sr-speedbar
     elscreen
-    powerline
     highlight-parentheses
     fold-dwim
     js3-mode
@@ -34,6 +28,9 @@
     deferred
     icicles
     markdown-mode
+    company
+    company-quickhelp
+    telephone-line
     ))
 
 (defun ytcf/install_packages ()
@@ -66,13 +63,13 @@
 ;; theme
 (load-theme 'nzenburn t)
 
-;; dissable startup message
+;; disable startup message
 (setq inhibit-startup-message t)
 ;;
 (setq display-time-day-and-date t)
 ;;
 (setq-default visible-bell t)
-;; dissable toolbar
+;; disable toolbar
 (tool-bar-mode -1)
 ;;
 (menu-bar-mode 0)
@@ -130,6 +127,7 @@
 
 
 ;;
+(set-language-environment "utf-8")
 (setq-default buffer-file-coding-system 'utf-8-unix)
 (setq-default default-file-name-coding-system 'utf-8-unix)
 (setq-default default-keyboard-coding-system 'utf-8-unix)
@@ -150,7 +148,6 @@
 (elscreen-start)
 
 
-
 ;;; --
 ;; for japanese input
 ;; http://www.ubiqlog.com/archives/8538
@@ -158,19 +155,16 @@
 (setq-default quail-japanese-use-double-n t)
 
 (when (require 'mozc nil 'noerror)
-  (set-language-environment "Japanese")
+  ;(set-language-environment "Japanese")
   (setq-default default-input-method "japanese-mozc")
   (setq-default mozc-candidate-style 'echo-area)
   (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method))
 
 
-
 ;;; --
 ;;
-(require 'powerline)
-(powerline-reset)
-(powerline-default-theme)
-
+(require 'telephone-line)
+(telephone-line-mode 1)
 
 
 ;;; --
@@ -221,7 +215,6 @@
 (global-highlight-parentheses-mode t)
 
 
-
 ;; --
 ;; fold
 (require 'fold-dwim)
@@ -231,7 +224,6 @@
 (global-set-key (kbd "<S-M-f7>")  'fold-dwim-show-all)
 
 
-
 ;;; -- window
 ;(global-set-key (kbd "C-S-b")     'shrink-window-horizontally)
 ;(global-set-key (kbd "C-S-f")     'enlarge-window-horizontally)
@@ -239,9 +231,22 @@
 ;(global-set-key (kbd "C-S-p")     'shrink-window)
 
 
+;;; -- reload
+(setq imenu-auto-rescan t)
+(setq org-imenu-depth 6)
+(add-hook 'org-mode-hook
+          (lambda () (imenu-add-to-menubar "Imenu")))
+
+
+;;; -- sr-speedbar
+(require 'sr-speedbar)
+(sr-speedbar-refresh-turn-on)
+(setq sr-speedbar-right-side nil)
+(global-set-key (kbd "C-c s")   'sr-speedbar-toggle)
+
 
 ;;; --
-;;
+;; remove trailing whitespace when saving files except markdown
 (add-hook 'before-save-hook
           '(lambda ()
              (when (and (stringp buffer-file-name)
@@ -261,6 +266,42 @@
 (global-set-key [f11] 'ytcf/toggle-fullscreen)
 
 
+;;; ---
+;; company-mode
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay 0)
+(setq company-minimum-prefix-length 1)
+(setq company-selection-wrap-around t)
+
+(define-key company-active-map (kbd "M-n") nil)
+(define-key company-active-map (kbd "M-p") nil)
+(define-key company-active-map (kbd "TAB") 'company-select-next)
+(define-key company-active-map (kbd "C-n") 'company-select-next)
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-active-map (kbd "C-h") nil)
+
+(company-quickhelp-mode 1)
+(setq company-quickhelp-delay 0.2)
+
+(require 'color)
+(let ((bg (face-attribute 'default :background)))
+  (custom-set-faces
+   `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 6)))))
+   `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 20)))))
+   `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 15)))))
+   `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+   `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+
+
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (set (make-local-variable 'company-backends) '(company-elisp))))
+
+
+;;; ----
+
+
 ;;; --
 (load "mode-config/c++.el")
 (load "mode-config/web.el")
@@ -278,3 +319,12 @@
 ;;; --
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-hook 'markdown-mode-hook 'show-ws-toggle-show-trailing-whitespace)
+
+
+;;; --
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
+(autoload 'bison-mode "bison-mode")
+(autoload 'flex-mode "flex-mode")
+(add-to-list 'auto-mode-alist '("\\.mly\\'" . bison-mode))
+(add-to-list 'auto-mode-alist '("\\.mll\\'" . flex-mode))
