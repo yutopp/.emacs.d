@@ -1,9 +1,6 @@
 ;;; -*- coding: utf-8 -*-
 
 ;;;
-(add-to-list 'load-path "~/.emacs.d/lisp")
-
-;;;
 ;;; initialize packages
 (require 'package)
 (add-to-list 'package-archives
@@ -164,6 +161,12 @@
 ;;; --
 ;;
 (require 'telephone-line)
+(setq telephone-line-lhs
+        '((accent . (telephone-line-buffer-segment))
+          (nil    . (telephone-line-minor-mode-segment))
+          (accent . (telephone-line-vc-segment
+                     telephone-line-erc-modified-channels-segment
+                     telephone-line-process-segment))))
 (telephone-line-mode 1)
 
 
@@ -271,7 +274,7 @@
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-idle-delay 0)
-(setq company-minimum-prefix-length 1)
+1(setq company-minimum-prefix-length 1)
 (setq company-selection-wrap-around t)
 
 (define-key company-active-map (kbd "M-n") nil)
@@ -287,28 +290,20 @@
 (require 'color)
 (let ((bg (face-attribute 'default :background)))
   (custom-set-faces
-   `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 6)))))
-   `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 20)))))
-   `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 15)))))
+   `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
+   `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 30)))))
+   `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 20)))))
    `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
    `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
-
-
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (set (make-local-variable 'company-backends) '(company-elisp))))
 
 
 ;;; ----
 
 
 ;;; --
-(load "mode-config/c++.el")
-(load "mode-config/web.el")
-(load "mode-config/coffeescript.el")
-(load "mode-config/ocaml.el")
-
-(load "mode-config/rill.el")
+;; load packages
+(dolist (name (directory-files "lisp/mode-config/" t "\.el$"))
+  (load name))
 
 
 ;;; --
