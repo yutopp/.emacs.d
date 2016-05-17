@@ -4,7 +4,6 @@
 ;;; initialize packages
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 ;;;
@@ -29,6 +28,10 @@
     telephone-line
     typescript-mode
     tide
+    eldoc
+    eldoc-extension
+    flyspell-popup
+    erlang
     ))
 
 (defun ytcf/install_packages ()
@@ -54,12 +57,36 @@
 (setq auto-save-default nil)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
-(setq gc-cons-threshold (* 10 gc-cons-threshold))
+(setq gc-cons-threshold (* 100 gc-cons-threshold))
+
+
+;;; ---
+;; http://rubikitch.com/2015/05/14/global-hl-line-mode-timer/
+(require 'hl-line)
+(defun global-hl-line-timer-function ()
+  (global-hl-line-unhighlight-all)
+  (let ((global-hl-line-mode t))
+    (global-hl-line-highlight)))
+(setq global-hl-line-timer
+      (run-with-idle-timer 0.02 t 'global-hl-line-timer-function))
+;; (cancel-timer global-hl-line-timer)
 
 
 ;;;
 ;; theme
-(load-theme 'nzenburn t)
+(load-theme 'zenburn t)
+; http://emacs.stackexchange.com/questions/17431/how-do-i-change-portions-of-a-custom-theme
+;(zenburn-with-color-variables
+;  (custom-theme-set-faces
+;   'zenburn
+;   `(region ((,class (:background ,zenburn-bg-2))
+;             (t :inverse-video t)))
+;   `(hl-line-face ((,class (:background ,zenburn-bg-1))
+;                   (t :weight bold)))
+;   `(hl-line ((,class (:background ,zenburn-bg-1)) ; old emacsen
+;              (t :weight bold)))
+;   ))
+
 
 ;; disable startup message
 (setq inhibit-startup-message t)
@@ -85,12 +112,17 @@
 
 ;;
 ;; yaourt -S ttf-inconsolata
-(cond
- ((find-font (font-spec :name "Inconsolata-11"))
-  (set-default-font "Inconsolata-11")
-  (set-face-font 'variable-pitch "Inconsolata-11")
-  ;(Set-Face-attribute 'default nil :height 100)
-  ))
+(set-face-attribute 'default nil :family "Inconsolata")
+;(set-face-attribute 'default nil :family "Consolas" :height 104)
+(set-fontset-font nil 'japanese-jisx0208 (font-spec :family "IPAGothic"))
+;(setq face-font-rescale-alist '(("IPAGothic" . 1.08)))
+
+;(cond
+; ((find-font (font-spec :name "Inconsolata-11"))
+;  (set-default-font "Inconsolata-11")
+;  (set-face-font 'variable-pitch "Inconsolata-11")
+;  ;(Set-Face-attribute 'default nil :height 100)
+;  ))
 
 
 ;;
@@ -150,13 +182,13 @@
 ;; for japanese input
 ;; http://www.ubiqlog.com/archives/8538
 (prefer-coding-system 'utf-8)
-(setq-default quail-japanese-use-double-n t)
-
+;(set-language-environment "Japanese")
+;(set-default 'buffer-file-coding-system 'utf-8)
+;(setq-default quail-japanese-use-double-n t)
+;
 (when (require 'mozc nil 'noerror)
-  ;(set-language-environment "Japanese")
   (setq-default default-input-method "japanese-mozc")
-  (setq-default mozc-candidate-style 'echo-area)
-  (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method))
+  (setq-default mozc-candidate-style 'echo-area))
 
 
 ;;; --
@@ -193,6 +225,7 @@
 ;             (define-key iswitchb-mode-map "\C-f" 'iswitchb-next-match)
 ;             (define-key iswitchb-mode-map "\C-b" 'iswitchb-prev-match)))
 
+
 ;;; --
 (require 'icicles)
 (icy-mode 1)
@@ -201,6 +234,7 @@
 ;;; --
 (setq ido-enable-flex-matching t)
 (ido-mode 1)
+
 ;; http://www.emacswiki.org/emacs/InteractivelyDoThings
 (defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
   (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
@@ -209,6 +243,36 @@
   (define-key ido-completion-map (kbd "C-b") 'ido-prev-match))
 (add-hook 'ido-setup-hook 'ido-define-keys)
 
+;; https://github.com/cofi/dotfiles/blob/master/emacs.d/config/cofi-files.el#L19
+(eval-after-load "ido"
+  '(progn
+     (setq ido-ignore-buffers (append
+                               ido-ignore-buffers
+                               '(
+                                 "\\` "
+                                 "\\`\\*.*\\*"
+                                 "_region_"
+                                 )))
+     (setq ido-ignore-directories (append
+                                   ido-ignore-directories
+                                   '(
+                                     "^auto/$"
+                                     "\\.prv/"
+                                     "_region_"
+                                     )))
+     (setq ido-ignore-files (append
+                             ido-ignore-files
+                             '(
+                               "^auto/$"
+                               "_region_"
+                               "\\.omc$"
+                               "\\.cmt$"
+                               "\\.cmx$"
+                               "\\.cmi$"
+                               "\\.cmti$"
+                               "\\.o$"
+                               )))
+     ))
 
 ;;; --
 ;; Highlght parentheses
@@ -275,7 +339,7 @@
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-idle-delay 0)
-1(setq company-minimum-prefix-length 1)
+(setq company-minimum-prefix-length 3)
 (setq company-selection-wrap-around t)
 
 (define-key company-active-map (kbd "M-n") nil)
@@ -286,7 +350,7 @@
 (define-key company-active-map (kbd "C-h") nil)
 
 (company-quickhelp-mode 1)
-(setq company-quickhelp-delay 0.2)
+(setq company-quickhelp-delay 0.15)
 
 (require 'color)
 (let ((bg (face-attribute 'default :background)))
@@ -294,17 +358,33 @@
    `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
    `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 30)))))
    `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 20)))))
-   `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+   ;`(company-tooltip-selection ((t (:inherit font-lock-warning-face :box "white"))))
    `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
 
 
-;;; ----
+;;; --
+;; http://d.hatena.ne.jp/kitokitoki/20101029/p3
+(defadvice save-buffers-kill-terminal (before my-save-buffers-kill-terminal activate)
+  (when (process-list)
+    (dolist (p (process-list))
+      (set-process-query-on-exit-flag p nil))))
 
+
+;;; ----
+(autoload 'bison-mode "bison-mode")
+(autoload 'flex-mode "flex-mode")
 
 ;;; --
 ;; load packages
 (dolist (name (directory-files "~/.emacs.d/lisp/mode-config/" t "\.el$"))
   (load name))
+
+
+;;; --
+;(setq load-path (cons "~/.emacs.d/ext" load-path))
+(load-library "~/.emacs.d/ext/k3-mode")
+(add-to-list 'auto-mode-alist '("\\.k$" . k3-mode)) ;; to launch k-mode for .k files
+(setq k-path "~/repo/k")
 
 
 ;;; --
@@ -315,7 +395,29 @@
 ;;; --
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
-(autoload 'bison-mode "bison-mode")
-(autoload 'flex-mode "flex-mode")
-(add-to-list 'auto-mode-alist '("\\.mly\\'" . bison-mode))
-(add-to-list 'auto-mode-alist '("\\.mll\\'" . flex-mode))
+
+;;; --
+(setq-default ispell-program-name "aspell")
+(eval-after-load "ispell"
+ '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+
+(defun ytcf/latex-mode-hook ()
+  (flyspell-mode t))
+
+(add-hook 'latex-mode-hook 'ytcf/latex-mode-hook)
+(add-hook 'markdown-mode-hook 'ytcf/latex-mode-hook)
+(eval-after-load "flyspell"
+  '(define-key flyspell-mode-map (kbd "C-;") #'flyspell-popup-correct))
+(add-hook 'before-save-hook
+          '(lambda ()
+             (when (and (stringp buffer-file-name)
+                        (string-match "\\.(tex|md)\\'" buffer-file-name))
+               (flyspell-buffer))
+             ))
+
+;;; --
+(add-to-list 'auto-mode-alist '("\\.rs$" . rust-mode))
+
+
+;;; -- Erlang
+(add-hook 'erlang-mode-hook 'erlang-font-lock-level-4)
