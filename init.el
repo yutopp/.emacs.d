@@ -11,6 +11,12 @@
 (when (not (package-installed-p 'use-package))
   (package-install 'use-package))
 (require 'use-package)
+
+(use-package init-loader
+  :ensure t
+  :config
+  (init-loader-load "~/.emacs.d/inits"))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
