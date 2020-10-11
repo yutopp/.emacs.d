@@ -35,3 +35,14 @@
 (setq global-hl-line-timer
       (run-with-idle-timer 0.02 t 'global-hl-line-timer-function))
 ;; (cancel-timer global-hl-line-timer)
+
+;;; Highlght parentheses
+
+(use-package highlight-parentheses :ensure t
+  :defer t
+  :init
+  (define-globalized-minor-mode global-highlight-parentheses-mode
+    highlight-parentheses-mode
+    (lambda ()
+      (highlight-parentheses-mode t)))
+  (global-highlight-parentheses-mode t))
