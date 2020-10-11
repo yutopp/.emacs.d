@@ -1,3 +1,4 @@
+;; tab
 (tab-bar-mode t)
 
 ;;; https://github.com/emacs-mirror/emacs/blob/master/lisp/tab-bar.el
@@ -18,3 +19,7 @@
 ;  (global-set-key (kbd "M-]") 'elscreen-next)
 ;  (global-set-key (kbd "M-[") 'elscreen-previous)
 ;  (elscreen-start))
+
+;; linenum
+
+(global-display-line-numbers-mode)
