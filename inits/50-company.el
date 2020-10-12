@@ -37,5 +37,4 @@
 
 (use-package company-box :ensure t
   :hook (company-mode . company-box-mode))
-;;  :config
-;;  (company-box-icons-resize 16))
+
