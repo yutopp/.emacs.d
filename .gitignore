@@ -3,6 +3,8 @@ elpa
 eshell
 url
 session.*
+.cache/
+.lsp-session-v1
 
 abbrev_defs
 ido.last
