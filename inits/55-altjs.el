@@ -12,3 +12,11 @@
 (use-package json-mode :ensure t
   :config
   (setq-default js-indent-level 2))
+
+
+;;; Elm
+
+;; npm i -g @elm-tooling/elm-language-server
+(use-package elm-mode :ensure t
+  :defer t
+  :init)

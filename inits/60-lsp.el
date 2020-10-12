@@ -17,7 +17,8 @@
   :hook
   ((go-mode
     rustic-mode
-    typescript-mode) . lsp-deferred))
+    typescript-mode
+    elm-mode) . lsp-deferred))
 
 (use-package lsp-ui :ensure t
   :commands lsp-ui-mode
