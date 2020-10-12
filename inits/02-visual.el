@@ -10,11 +10,10 @@
 ;;; fonts
 
 ;; yay -S ttf-inconsolata
-(set-face-attribute 'default nil :family "Inconsolata")
+(set-face-attribute 'default nil :family "Inconsolata" :height 136)
 ;;(set-face-attribute 'default nil :family "Consolas" :height 104)
 (set-fontset-font nil 'japanese-jisx0208 (font-spec :family "IPAGothic"))
 ;;(setq face-font-rescale-alist '(("IPAGothic" . 1.08)))
-(set-frame-font (font-spec :size 18))
 
 (set-fontset-font t 'symbol "Apple Color Emoji")
 (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
@@ -51,3 +50,14 @@
     (lambda ()
       (highlight-parentheses-mode t)))
   (global-highlight-parentheses-mode t))
+
+;;; mode-line
+
+(use-package all-the-icons)
+(use-package doom-modeline :ensure t
+  :init
+;;  (setq doom-modeline-height 1)
+;;  (custom-set-faces
+;;   '(mode-line ((t (:family "Noto Sans" :height 0.9))))
+;;   '(mode-line-inactive ((t (:family "Noto Sans" :height 0.9)))))
+  (doom-modeline-mode 1))
