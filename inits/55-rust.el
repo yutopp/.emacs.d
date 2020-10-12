@@ -6,4 +6,5 @@
 (use-package rustic :ensure t
   :defer t
   :init
-  (setq rustic-lsp-server 'rust-analyzer))
+  (setq rustic-lsp-server 'rust-analyzer
+        rustic-spinner-type 'moon))

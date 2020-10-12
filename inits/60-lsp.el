@@ -3,6 +3,10 @@
   ;; MEMO: https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
   (lsp-inhibit-message t)
   (lsp-message-project-root-warning t)
+;;  (lsp-document-sync-method 'incremental) ;; always send incremental document
+;;  (lsp-response-timeout 5)
+  (lsp-idle-delay 0.1)
+  (lsp-headerline-breadcrumb-enable t)
   (lsp-signature-auto-activate nil)
   (lsp-signature-render-documentation nil)
   (lsp-signature-function (lambda (_message))); work around
